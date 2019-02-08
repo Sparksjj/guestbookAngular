@@ -1,0 +1,147 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-10 col-md-offset-1">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          Здравствуйте {{ userName }}. Оставьте свое сообщение:
+        </div>
+        <div class="panel-body" [ngSwitch]="isAdmin">
+          <form
+            class="form-horizontal"
+            (ngSubmit)="submitForm(form)"
+            #form="ngForm"
+          >
+            <div class="form-group">
+              <label for="title" class="col-md-4 control-label"
+                >Заголовок:</label
+              >
+              <div class="col-md-6">
+                <input
+                  id="title"
+                  type="text"
+                  class="form-control"
+                  name="title"
+                  ngModel
+                  required
+                />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="message" class="col-md-4 control-label"
+                >Сообщение:</label
+              >
+              <div class="col-md-6">
+                <textarea
+                  id="message"
+                  class="form-control"
+                  name="message"
+                  ngModel
+                  required
+                ></textarea>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-md-6 col-md-offset-4 text-center">
+                <button
+                  type="submit"
+                  [disabled]="disableButton"
+                  class="btn btn-primary"
+                >
+                  Отправить
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">Все сообщения:</div>
+        <div class="panel-body" *ngFor="let comment of comments">
+          <div class="container">
+            <div class="comment">
+              <b>{{ comment?.user.name }}</b>
+              <p>{{ comment?.created_at }}</p>
+              <b>{{ comment?.title }}</b>
+              <p>{{ comment?.message }}</p>
+            </div>
+            <div>
+              <p
+                class="admin"
+                *ngFor="
+                  let answer of (comment.answer | reverse);
+                  trackBy: trackByFn;
+                  let i = index
+                "
+              >
+                {{ i + 1 }}. Administrator: {{ answer }} <br />
+              </p>
+            </div>
+            <div [ngSwitch]="isAdmin">
+              <form
+                *ngSwitchCase="1"
+                class="form-horizontal"
+                (ngSubmit)="submitAnswer(form)"
+                #form="ngForm"
+              >
+                <input
+                  id="userid"
+                  type="hidden"
+                  class="form-control"
+                  name="userid"
+                  [ngModel]="comment.user.id"
+                />
+                <input
+                  id="apitoken"
+                  type="hidden"
+                  class="form-control"
+                  name="apitoken"
+                  [ngModel]="comment.user.api_token"
+                />
+                <input
+                  id="commentid"
+                  type="hidden"
+                  class="form-control"
+                  name="commentid"
+                  [ngModel]="comment.comment_id"
+                />
+                <div class="form-group">
+                  <div class="col-md-6">
+                    <textarea
+                      id="message"
+                      class="form-control"
+                      name="message"
+                      ngModel
+                      required
+                    ></textarea>
+                    <button
+                      type="submit"
+                      [disabled]="disableButton"
+                      class="btn btn-primary"
+                    >
+                      Отправить
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <ul class="pager">
+          <li>Текущая страница: {{ currentPage }}</li>
+          <li>
+            <button class="btn btn-light" (click)="switchPrevPage()">
+              Предыдущая
+            </button>
+          </li>
+          <li>
+            <button class="btn btn-light" (click)="switchNextPage()">
+              Следующая
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
